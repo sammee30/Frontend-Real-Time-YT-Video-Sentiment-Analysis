@@ -240,4 +240,92 @@ document.addEventListener("DOMContentLoaded", async () => {
         outputDiv.innerHTML += "<p>Error fetching trend graph image.</p>";
       }
     }
+
+    async function fetchSummary(comments) {
+      try {
+          const textBlob = comments.slice(0, 100).map(comment => comment.text).join("\n");
+  
+          const summaryLoading = document.getElementById("summary-loading");
+          const summaryText = document.getElementById("summary-text");
+          summaryLoading.style.display = "block";
+          summaryText.textContent = "";
+  
+          // Fetch the summary from OpenAI API
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `YOUR_OPENAI_API_KEY` // Replace with your OpenAI API key
+              },
+              body: JSON.stringify({
+                  model: "gpt-4",
+                  messages: [
+                      { role: "system", content: "You are a helpful assistant that summarizes YouTube comments." },
+                      { role: "user", content: `Summarize the following comments:\n\n${textBlob}` }
+                  ],
+                  max_tokens: 150,
+                  temperature: 0.7
+              })
+          });
+  
+          const result = await response.json();
+  
+          if (response.ok) {
+              summaryText.textContent = result.choices[0].message.content.trim();
+          } else {
+              throw new Error(result.error.message || "Failed to fetch summary");
+          }
+      } catch (error) {
+          console.error("Error fetching summary:", error);
+          const summaryText = document.getElementById("summary-text");
+          summaryText.textContent = "Error generating summary.";
+      } finally {
+          document.getElementById("summary-loading").style.display = "none";
+      }
+  }
+  
+
+    async function fetchSummary(comments) {
+      try {
+          const textBlob = comments.slice(0, 100).map(comment => comment.text).join("\n");
+  
+          const summaryLoading = document.getElementById("summary-loading");
+          const summaryText = document.getElementById("summary-text");
+          summaryLoading.style.display = "block";
+          summaryText.textContent = "";
+  
+          // Fetch the summary from OpenAI API
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `YOUR_OPENAI_API_KEY` // Replace with your OpenAI API key
+              },
+              body: JSON.stringify({
+                  model: "gpt-4",
+                  messages: [
+                      { role: "system", content: "You are a helpful assistant that summarizes YouTube comments." },
+                      { role: "user", content: `Summarize the following comments:\n\n${textBlob}` }
+                  ],
+                  max_tokens: 150,
+                  temperature: 0.7
+              })
+          });
+  
+          const result = await response.json();
+  
+          if (response.ok) {
+              summaryText.textContent = result.choices[0].message.content.trim();
+          } else {
+              throw new Error(result.error.message || "Failed to fetch summary");
+          }
+      } catch (error) {
+          console.error("Error fetching summary:", error);
+          const summaryText = document.getElementById("summary-text");
+          summaryText.textContent = "Error generating summary.";
+      } finally {
+          document.getElementById("summary-loading").style.display = "none";
+      }
+  }
+  
   });
